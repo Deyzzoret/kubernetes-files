@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  deployment-user-api
+  labels:
+    name: deployment-user-api-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app:  user-api-app
+  template:
+    metadata:
+      labels:
+        app:  user-api-app
+    spec:
+      containers:
+      - name: auth-cont
+        image: deyzzoret/auth-app:1.0.0
+        ports:
+          - containerPort: 80
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+
+
+      - image:  deyzzoret/user-api:1.0.4
+        name:  user-api-cont      
+        ports:
+        - containerPort:  8080
+          name:  user-api-port
+        env:
+          - name: AUTH_ADDR
+            valueFrom:
+              configMapKeyRef:
+                name: configmap-url-auth
+                key: auth_server
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"

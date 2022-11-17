@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name:  svc-extern-user-api
+spec:
+  selector:
+    app: user-api-app
+  type:  LoadBalancer
+  ports:
+  - name: userapi-ext-svc-port
+    protocol: TCP
+    port:  8080
+    targetPort:  8080
