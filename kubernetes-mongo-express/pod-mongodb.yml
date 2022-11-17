@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-mongodb
+  labels:
+    app: my-mongo-db-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp-mongodb
+  template:
+    metadata:
+      labels:
+        # (**)
+        app: myapp-mongodb
+    spec:
+      containers:
+        - name: mongodb-cont
+          image: mongo:4.2.0
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: secret-mongo
+                  key: username
+                  optional: false 
+
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-mongo
+                  key: password_user
+                  optional: false 
+
+          ports:
+            - containerPort: 27017
+
+

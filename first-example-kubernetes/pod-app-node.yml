@@ -1,0 +1,47 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app-deploy
+  labels:
+    app: myapp-node
+spec:
+  selector:
+    matchLabels:
+      app: myapp-node
+  template:
+    metadata:
+      labels:
+        app: myapp-node
+    spec:
+      containers:
+      - name: node-app-pod
+        image: deyzzoret/kubernetes-first-app:1.0.4
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+          - containerPort: 8080
+        volumeMounts:
+          - name:  story-pv-cont
+            mountPath:  /data/story
+      volumes:
+        - name:  story-pv-cont
+          persistentVolumeClaim:
+            claimName: story-folder-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-node-app
+spec:
+  selector:
+    app: myapp-node
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    name: expose-node-app
+    port: 5001
+    targetPort: 8080
+
